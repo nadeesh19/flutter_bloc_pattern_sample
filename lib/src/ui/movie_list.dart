@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/item_model.dart';
 import '../blocs/movies_bloc.dart';
 import 'movie_details.dart';
+import '../blocs/movie_detail_bloc_provider.dart';
 
 class MovieList extends StatefulWidget {
   @override
@@ -52,10 +53,18 @@ class MovieListState extends State<MovieList> {
           return GridTile(
             child: InkResponse(
               enableFeedback: true,
-              child: Image.network(
-                'https://image.tmdb.org/t/p/w185${snapshot.data
-                    .results[index].poster_path}',
-                fit: BoxFit.cover,
+              child: Container(
+                padding: new EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueAccent),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(10.0) //                 <--- border radius here
+                    )
+                ),
+                child: Image.network(
+                  'https://image.tmdb.org/t/p/w185${snapshot.data.results[index].poster_path}',
+                  fit: BoxFit.cover,
+                ),
               ),
               onTap: () => openDetailPage(snapshot.data, index),
             ),
@@ -67,13 +76,15 @@ class MovieListState extends State<MovieList> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
-        return MovieDetails(
-          title: data.results[index].title,
-          posterUrl: data.results[index].backdrop_path,
-          description: data.results[index].overview,
-          releaseDate: data.results[index].release_date,
-          voteAverage: data.results[index].vote_average.toString(),
-          movieId: data.results[index].id,
+        return MovieDetailBlocProvider(
+          child: MovieDetails(
+            title: data.results[index].title,
+            posterUrl: data.results[index].backdrop_path,
+            description: data.results[index].overview,
+            releaseDate: data.results[index].release_date,
+            voteAverage: data.results[index].vote_average.toString(),
+            movieId: data.results[index].id,
+          ),
         );
       }),
     );
